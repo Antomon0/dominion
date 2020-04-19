@@ -20,6 +20,9 @@ export class ViewComponent implements OnInit {
     this.io.joinSuccess().subscribe((joinMsg: string) => {
       this.messages.push(joinMsg);
     });
+    this.io.startGame().subscribe((life: number) => {
+      this.messages.push(life.toFixed(0));
+    });
   }
 
   joinRoom(username: string): void {

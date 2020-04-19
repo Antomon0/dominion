@@ -17,10 +17,18 @@ export class SocketService {
         this.socket.emit('join', roomName, username);
     }
 
-    joinSuccess(): Observable<any> {
+    joinSuccess(): Observable<string> {
         return new Observable((subscriber) => {
-            this.socket.on('successfullJoin', (joinMsg) => {
+            this.socket.on('successfullJoin', (joinMsg: string) => {
                 subscriber.next(joinMsg);
+            });
+        });
+    }
+
+    startGame(): Observable<number> {
+        return new Observable((subscriber) => {
+            this.socket.on('startGame', (life: number) => {
+                subscriber.next(life);
             });
         });
     }
