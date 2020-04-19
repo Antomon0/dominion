@@ -1,0 +1,6 @@
+<input #name type='text' placeholder='Enter a username'>
+<button (click)='joinRoom(name.value)'>Join Game</button>
+
+<div *ngFor="let msg of messages">
+  {{msg}}
+</div>
