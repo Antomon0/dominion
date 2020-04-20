@@ -1,0 +1,7 @@
+<h1>Input your commander deck</h1>
+<div>
+  One card name per line <br>
+  Closing this window will leave the game
+</div>
+<textarea #deck rows="100" cols="50">Input deck here...</textarea>
+<button (click)="sendDeck(deck.value)">Submit Deck</button>

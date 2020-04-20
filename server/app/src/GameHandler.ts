@@ -19,4 +19,11 @@ export class GameHandler {
         this.games.push(new Game(this.io, roomName, Object.keys(connectedSockets.sockets)));
     }
 
+    cancelGame(roomName: string, connectedSockets: socketio.Room) {
+        const indexOfGame = this.games.findIndex((game) => {
+            game.roomName === roomName;
+        });
+        this.games.splice(indexOfGame);
+    }
+
 }

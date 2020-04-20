@@ -1,20 +1,27 @@
-import { Card } from "./Card";
+// import { Card } from "./Card";
 
 
 export class Player {
 
     private life: number;
-    private hand: Card[]
+    // private hand: Card[]
+    // private deck: Card[];
 
-    constructor() {
+
+    constructor(
+
+    ) {
         this.life = 40;
-        this.hand = [];
-        for (let i = 0; i < 7; i++) {
-            this.hand.push(new Card());
-        }
+        // this.hand = [];
+        // this.deck = [];
     }
 
     getLife(): number {
         return this.life;
     }
+
+    assembleDeck(deck: string[]): void {
+        console.log(deck);
+    }
+
 }

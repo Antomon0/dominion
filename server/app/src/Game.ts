@@ -15,7 +15,11 @@ export class Game {
         this.players = new Map<string, Player>();
         sids.forEach((sid) => {
             this.players.set(sid, new Player());
-            this.io.to(sid).emit('startGame', this.players.get(sid)?.getLife());
+            this.io.to(sid).emit('startGame');
+
+            this.io.sockets.sockets[sid].on('deck', (deck: string[]) => {
+                this.players.get(sid)?.assembleDeck(deck);
+            })
         });
     }
 

@@ -19,18 +19,32 @@ export class RoomHandler {
 
     joinRoom(socket: SocketIO.Socket, roomName: string, username: string): void {
         if (roomName === this.defaultRoom && this.nbConnectedToRoom(roomName) < this.maxPerRoom) {
-            socket.join(this.defaultRoom);
-            this.io.in(this.defaultRoom).emit('successfullJoin', `${username} joined ${roomName}`);
+            socket.join(roomName);
+            this.io.in(roomName).emit('successfullJoin', `${username} joined ${roomName}`);
             this.startGameIfRoomFull(roomName);
         } else {
             socket.emit('failedJoin');
         }
     }
 
+    leaveRoom(socket: SocketIO.Socket, roomName: string) {
+        if (roomName === this.defaultRoom) {
+            socket.leave(roomName);
+            this.cancelGameIfNotEnoughPlayers(roomName);
+        }
+    }
+
     private startGameIfRoomFull(roomName: string) {
         const connectedClients = this.getConnectedClients(roomName);
-        if (connectedClients && connectedClients.length == this.maxPerRoom) {
+        if (connectedClients && connectedClients.length === this.maxPerRoom) {
             this.game.startGame(roomName, connectedClients);
+        }
+    }
+
+    private cancelGameIfNotEnoughPlayers(roomName: string) {
+        const connectedClients = this.getConnectedClients(roomName);
+        if (connectedClients && connectedClients.length !== this.maxPerRoom) {
+            this.game.cancelGame(roomName, connectedClients);
         }
     }
 

@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { SocketService } from '../service/socket-service.service';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { DeckInputComponent } from '../components/deck-input/deck-input.component';
 
 @Component({
   selector: 'app-view',
@@ -9,9 +11,11 @@ import { SocketService } from '../service/socket-service.service';
 export class ViewComponent implements OnInit {
 
   messages: string[];
+  openedDialog: MatDialogRef<DeckInputComponent>;
 
   constructor(
     public io: SocketService,
+    private dialogOpener: MatDialog,
   ) {
     this.messages = [];
   }
@@ -21,7 +25,10 @@ export class ViewComponent implements OnInit {
       this.messages.push(joinMsg);
     });
     this.io.startGame().subscribe((life: number) => {
-      this.messages.push(life.toFixed(0));
+      this.openedDialog = this.dialogOpener.open(DeckInputComponent, { height: '90%' });
+      this.openedDialog.afterClosed().subscribe(() => {
+        // do stuff when closes
+      });
     });
   }
 

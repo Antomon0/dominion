@@ -1,0 +1,7 @@
+input {
+  height: 100%;
+}
+
+textarea {
+  resize: none;
+}
