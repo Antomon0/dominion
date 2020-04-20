@@ -32,8 +32,8 @@ export class SocketIo {
                 this.roomHandler.joinRoom(socket, roomName, username);
             });
 
-            socket.on('leave', (roomName: string) => {
-                this.roomHandler.leaveRoom(socket, roomName);
+            socket.on('leave', () => {
+                this.roomHandler.leaveRoom(socket);
             })
 
             socket.on('disconnect', () => {

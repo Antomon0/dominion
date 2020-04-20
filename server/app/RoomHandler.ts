@@ -8,17 +8,39 @@ import socketio from 'socket.io';
 export class RoomHandler {
 
     readonly defaultNamespace: string = '/'
-    readonly defaultRoom: string = 'room1'
+    readonly roomInfo: [string, number][];
+    readonly rooms: string[] = [
+        'room1',
+        'room2',
+        'room3',
+        'room4'
+    ]
     readonly maxPerRoom: number = 2;
 
     io: socketio.Server;
 
     constructor(
         @inject(types.GameHandler) private game: GameHandler,
-    ) { }
+    ) {
+        this.roomInfo = [];
+        this.rooms.forEach((room) => {
+            this.roomInfo.push([room, 0]);
+        });
+        setInterval(() => this.sendRoomInfo(), 1000);
+    }
+
+    sendRoomInfo(): void {
+        this.roomInfo.forEach((info) => {
+            const nbConnected = this.nbConnectedToRoom(info[0]);
+            if (info[1] !== nbConnected) {
+                info[1] = nbConnected;
+            }
+        });
+        this.io.emit('roomInfo', this.roomInfo);
+    }
 
     joinRoom(socket: SocketIO.Socket, roomName: string, username: string): void {
-        if (roomName === this.defaultRoom && this.nbConnectedToRoom(roomName) < this.maxPerRoom) {
+        if (this.rooms.includes(roomName) && this.nbConnectedToRoom(roomName) < this.maxPerRoom) {
             socket.join(roomName);
             this.io.in(roomName).emit('successfullJoin', `${username} joined ${roomName}`);
             this.startGameIfRoomFull(roomName);
@@ -27,11 +49,13 @@ export class RoomHandler {
         }
     }
 
-    leaveRoom(socket: SocketIO.Socket, roomName: string) {
-        if (roomName === this.defaultRoom) {
-            socket.leave(roomName);
-            this.cancelGameIfNotEnoughPlayers(roomName);
-        }
+    leaveRoom(socket: SocketIO.Socket) {
+        Object.keys(socket.rooms).forEach((room) => {
+            if (room !== socket.id) {
+                socket.leave(room);
+                this.cancelGameIfNotEnoughPlayers(room);
+            }
+        })
     }
 
     private startGameIfRoomFull(roomName: string) {

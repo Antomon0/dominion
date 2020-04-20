@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { SocketService } from '../service/socket-service.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DeckInputComponent } from '../components/deck-input/deck-input.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-view',
@@ -10,30 +11,25 @@ import { DeckInputComponent } from '../components/deck-input/deck-input.componen
 })
 export class ViewComponent implements OnInit {
 
-  messages: string[];
-  openedDialog: MatDialogRef<DeckInputComponent>;
+  roomInfo: [string, number][];
 
   constructor(
-    public io: SocketService,
-    private dialogOpener: MatDialog,
-  ) {
-    this.messages = [];
-  }
+    private io: SocketService,
+    private router: Router,
+  ) { }
 
   ngOnInit(): void {
-    this.io.joinSuccess().subscribe((joinMsg: string) => {
-      this.messages.push(joinMsg);
+    this.io.roomInfo().subscribe((roomInfo) => {
+      this.roomInfo = roomInfo;
     });
-    this.io.startGame().subscribe((life: number) => {
-      this.openedDialog = this.dialogOpener.open(DeckInputComponent, { height: '90%' });
-      this.openedDialog.afterClosed().subscribe(() => {
-        // do stuff when closes
-      });
+
+    this.io.joinSuccess().subscribe((joinMsg: string) => {
+      this.router.navigateByUrl('/room');
     });
   }
 
-  joinRoom(username: string): void {
-    this.io.joinRoom('room1', username);
+  joinRoom(roomName: string, username: string): void {
+    this.io.joinRoom(roomName, username);
   }
 
 }

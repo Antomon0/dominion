@@ -21,8 +21,8 @@ export class SocketService {
         this.socket.emit('join', roomName, username);
     }
 
-    leaveRoom(roomName: string): void {
-        this.socket.emit('leave', roomName);
+    leaveRoom(): void {
+        this.socket.emit('leave');
     }
 
     sendDeck(deck: string): void {
@@ -51,6 +51,14 @@ export class SocketService {
         return new Observable((subscriber) => {
             this.socket.on('startGame', () => {
                 subscriber.next();
+            });
+        });
+    }
+
+    roomInfo(): Observable<[string, number][]> {
+        return new Observable((subscriber) => {
+            this.socket.on('roomInfo', (roomInfo: [string, number][]) => {
+                subscriber.next(roomInfo);
             });
         });
     }

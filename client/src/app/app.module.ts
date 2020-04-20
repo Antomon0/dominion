@@ -7,12 +7,14 @@ import { ViewComponent } from './view/view.component';
 import { SocketService } from './service/socket-service.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DeckInputComponent } from './components/deck-input/deck-input.component';
+import { RoomComponent } from './components/room/room.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     ViewComponent,
-    DeckInputComponent
+    DeckInputComponent,
+    RoomComponent
   ],
   imports: [
     BrowserModule,
