@@ -30,7 +30,12 @@ export class RoomHandler {
         });
         setInterval(() => this.sendRoomInfo(), 1000);
 
-        setTimeout(() => this.api.getCard('Austere Command'), 0);
+        setTimeout(() => this.api.getCollection([
+            'Austere Command',
+            'Tarmogoyf',
+            'Lightning Bolt',
+            'Some card that isnt valid'
+        ]), 0);
     }
 
     sendRoomInfo(): void {
