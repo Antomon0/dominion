@@ -2,6 +2,7 @@
 // returns, striped down to necessary things for this
 
 import { CardFace } from "./cardface";
+import { Images } from "./Images";
 
 export interface Card {
     "object": string;
@@ -19,5 +20,5 @@ export interface Card {
     "toughness": string | null;
     "type_line": string;
     "flavor_text": string | null;
-    "image_uris": Object | null;
+    "image_uris": Images;
 }

@@ -3,7 +3,6 @@ import { injectable, inject } from 'inversify';
 import types from '../config/types';
 import { GameHandler } from './GameHandler';
 import socketio from 'socket.io';
-import { ScryfallApiService } from './ScryfallApiService';
 
 @injectable()
 export class RoomHandler {
@@ -22,20 +21,12 @@ export class RoomHandler {
 
     constructor(
         @inject(types.GameHandler) private game: GameHandler,
-        @inject(types.Scryfall) private api: ScryfallApiService,
     ) {
         this.roomInfo = [];
         this.rooms.forEach((room) => {
             this.roomInfo.push([room, 0]);
         });
         setInterval(() => this.sendRoomInfo(), 1000);
-
-        setTimeout(() => this.api.getCollection([
-            'Austere Command',
-            'Tarmogoyf',
-            'Lightning Bolt',
-            'Some card that isnt valid'
-        ]), 0);
     }
 
     sendRoomInfo(): void {

@@ -1,4 +1,4 @@
-import { Card } from "../app/src/Card";
+import { Card } from "./Card";
 
 export interface Cards {
     [name: string]: Card

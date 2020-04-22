@@ -1,7 +1,7 @@
 import { injectable } from "inversify";
 import * as fs from 'fs';
 import { Cards } from "../../interfaces/cards";
-import { Card } from "../src/Card";
+import { Card } from "../../interfaces/Card";
 
 @injectable()
 export class CacheService {

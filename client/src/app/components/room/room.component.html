@@ -4,3 +4,7 @@
   <!-- <button *ngIf='this.roomInfo' (click)='startGame()'>Start Game</button> -->
   <button (click)='leaveRoom()'>Leave Room</button>
 </div>
+
+<div class='imgContainer'>
+  <img *ngFor="let uri of uris" [src]='uri'>
+</div>

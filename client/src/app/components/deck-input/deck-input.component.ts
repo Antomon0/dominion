@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { SocketService } from 'src/app/service/socket-service.service';
+import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-deck-input',
@@ -9,11 +10,13 @@ import { SocketService } from 'src/app/service/socket-service.service';
 export class DeckInputComponent {
 
   constructor(
+    private matdialogRef: MatDialogRef<DeckInputComponent>,
     private socket: SocketService,
   ) { }
 
   sendDeck(deck: string) {
     this.socket.sendDeck(deck);
+    this.matdialogRef.close();
   }
 
 }

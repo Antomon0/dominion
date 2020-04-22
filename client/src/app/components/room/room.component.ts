@@ -14,6 +14,7 @@ import { Subscription } from 'rxjs';
 export class RoomComponent implements OnDestroy {
 
   title: string;
+  uris: string[];
   openedDialog: MatDialogRef<DeckInputComponent>;
   subscriptions: Subscription[];
 
@@ -26,6 +27,7 @@ export class RoomComponent implements OnDestroy {
   ) {
     this.title = this.route.snapshot.paramMap.get('id');
     this.subscriptions = [];
+
     this.subscriptions.push(
       this.io.startGame().subscribe(() => {
         this.openedDialog = this.dialogOpener.open(DeckInputComponent, { height: '90%' });
@@ -33,6 +35,12 @@ export class RoomComponent implements OnDestroy {
           this.cancelGame();
         });
       }));
+
+    this.subscriptions.push(
+      this.io.deckInfo().subscribe((uris: string[]) => {
+        this.uris = uris;
+      })
+    );
   }
 
   startGame(): void {

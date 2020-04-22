@@ -5,4 +5,6 @@ export default {
     RoomHandler: Symbol('RoomHandler'),
     GameHandler: Symbol('GameHandler'),
     Scryfall: Symbol('ScryfallApiService'),
+    Game: Symbol('Game'),
+    Player: Symbol('Player'),
 }

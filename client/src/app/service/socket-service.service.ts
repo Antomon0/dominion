@@ -63,6 +63,14 @@ export class SocketService {
         });
     }
 
+    deckInfo(): Observable<string[]> {
+        return new Observable((subscriber) => {
+            this.socket.on('finishedDeck', (uris: string[]) => {
+                subscriber.next(uris);
+            });
+        });
+    }
+
     private validCommanderDeck(cards: string[]): boolean {
         let nbCards = 0;
         let nbCommanders = 0;
