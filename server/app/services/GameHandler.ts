@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { injectable } from "inversify";
-import { Game } from './Game';
+import { Game } from '../src/Game';
 import socketio from 'socket.io';
 
 

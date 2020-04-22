@@ -2,9 +2,9 @@ import 'reflect-metadata';
 import { injectable, inject } from "inversify";
 import * as socketio from 'socket.io';
 import * as http from 'http';
-import types from './types';
-import { RoomHandler } from './RoomHandler';
-import { GameHandler } from './src/GameHandler';
+import types from './config/types';
+import { RoomHandler } from './services/RoomHandler';
+import { GameHandler } from './services/GameHandler';
 
 
 @injectable()

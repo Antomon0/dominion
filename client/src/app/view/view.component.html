@@ -1,10 +1,11 @@
 <h1>mtg - browser</h1>
 <p>a browser based mtg player</p>
 
-<input #name type='text' placeholder='Enter a username'>
-
-<div *ngFor="let room of roomInfo">
-  <button (click)='joinRoom(room[0], name.value)'>
-    Join {{room[0]}} : {{room[1]}}/2
-  </button>
+<div class='inputSection'>
+  <input #name type='text' placeholder='Enter a username'>
+  <div *ngFor="let room of roomInfo.roomInfo">
+    <button (click)='joinRoom(room[0], name.value)'>
+      Join {{roomInfo.getRoomStatus(room[0])}}
+    </button>
+  </div>
 </div>

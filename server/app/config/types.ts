@@ -4,5 +4,5 @@ export default {
     Application: Symbol('Application'),
     RoomHandler: Symbol('RoomHandler'),
     GameHandler: Symbol('GameHandler'),
-
+    Scryfall: Symbol('ScryfallApiService'),
 }

@@ -1,32 +1,25 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { SocketService } from '../service/socket-service.service';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { DeckInputComponent } from '../components/deck-input/deck-input.component';
 import { Router } from '@angular/router';
+import { RoomInfoService } from '../service/room-info-service.service';
 
 @Component({
   selector: 'app-view',
   templateUrl: './view.component.html',
   styleUrls: ['./view.component.css']
 })
-export class ViewComponent implements OnInit {
-
-  roomInfo: [string, number][];
+export class ViewComponent {
 
   constructor(
     private io: SocketService,
     private router: Router,
-  ) { }
-
-  ngOnInit(): void {
-    this.io.roomInfo().subscribe((roomInfo) => {
-      this.roomInfo = roomInfo;
-    });
-
-    this.io.joinSuccess().subscribe((joinMsg: string) => {
-      this.router.navigateByUrl('/room');
+    public roomInfo: RoomInfoService,
+  ) {
+    this.io.joinSuccess().subscribe((room: string) => {
+      this.router.navigate(['room/', room]);
     });
   }
+
 
   joinRoom(roomName: string, username: string): void {
     this.io.joinRoom(roomName, username);

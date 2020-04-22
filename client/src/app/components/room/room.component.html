@@ -1,2 +1,6 @@
-<p>room works!</p>
-<button (click)='leaveRoom()'>Leave room</button>
+<div>
+  <h1>{{title}}</h1>
+  <p>{{roomInfo.getRoomStatus(title)}}</p>
+  <!-- <button *ngIf='this.roomInfo' (click)='startGame()'>Start Game</button> -->
+  <button (click)='leaveRoom()'>Leave Room</button>
+</div>

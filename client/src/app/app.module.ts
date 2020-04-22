@@ -8,6 +8,7 @@ import { SocketService } from './service/socket-service.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DeckInputComponent } from './components/deck-input/deck-input.component';
 import { RoomComponent } from './components/room/room.component';
+import { RoomInfoService } from './service/room-info-service.service';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import { RoomComponent } from './components/room/room.component';
   ],
   providers: [
     SocketService,
+    RoomInfoService,
   ],
   entryComponents: [
     DeckInputComponent,

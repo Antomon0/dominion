@@ -1,6 +1,6 @@
-import Types from './types';
+import Types from './config/types';
 import { Server } from "./server";
-import { container } from './inversify.config';
+import { container } from './config/inversify.config';
 
 const server: Server = container.get<Server>(Types.Server);
 

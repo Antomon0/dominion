@@ -3,7 +3,7 @@ import { injectable, inject } from "inversify";
 import { Application } from "./app";
 import { SocketIo } from './SocketIo';
 import * as http from 'http';
-import Types from './types';
+import Types from './config/types';
 
 @injectable()
 export class Server {
