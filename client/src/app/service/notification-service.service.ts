@@ -13,11 +13,24 @@ export class NotificationService {
 
     notify(message: string) {
         if (this.notificationPanel) {
-            this.notificationPanel.nativeElement.innerHTML = message;
-            this.toggleDisplay();
-
-            setTimeout(() => this.toggleDisplay(), 3000);
+            this.notificationPanel.nativeElement.classList.add('green');
+            this.notificationPanel.nativeElement.classList.remove('red');
+            this.displayMessage(message);
         }
+    }
+
+    error(message: string) {
+        if (this.notificationPanel) {
+            this.notificationPanel.nativeElement.classList.remove('green');
+            this.notificationPanel.nativeElement.classList.add('red');
+            this.displayMessage(message);
+        }
+    }
+
+    private displayMessage(message: string) {
+        this.notificationPanel.nativeElement.innerHTML = message;
+        this.toggleDisplay();
+        setTimeout(() => this.toggleDisplay(), 3000);
     }
 
     private toggleDisplay() {

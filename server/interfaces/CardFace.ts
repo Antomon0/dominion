@@ -1,7 +1,9 @@
+import { Images } from "./Images";
+
 export interface CardFace {
     "colors": string | null;
     "flavor_text": string | null;
-    "image_uris": Object | null;
+    "image_uris": Images | null;
     "loyalty": string | null;
     "mana_cost": string;
     "name": string;

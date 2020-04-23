@@ -1,5 +1,5 @@
 import * as io from 'socket.io-client';
-import { Observable, Subscriber } from 'rxjs';
+import { Observable } from 'rxjs';
 import { NotificationService } from './notification-service.service';
 import { Injectable } from '@angular/core';
 
@@ -13,11 +13,15 @@ export class SocketService {
         private notification: NotificationService,
     ) {
         this.socket = io(this.url);
+        this.socket.on('connect', () => {
+            this.notification.notify('Successfully connected to server.');
+        });
+
         this.socket.on('connect_error', () => {
-            this.notification.notify('Couldn\'t connect to the server.');
+            this.notification.error('Couldn\'t connect to the server.');
         });
         this.socket.on('failedJoin', () => {
-            this.notification.notify('Failed joining room, it might be full.');
+            this.notification.error('Failed joining room, it might be full.');
         });
     }
 
@@ -34,11 +38,12 @@ export class SocketService {
     }
 
     sendDeck(deck: string): void {
-        const cards = deck.split('\n');
-        if (this.validCommanderDeck(cards)) {
+        try {
+            const cards = deck.split('\n');
+            this.checkValidCommanderDeck(cards);
             this.socket.emit('deck', cards);
-        } else {
-            window.alert('Invalid deck format...');
+        } catch (err) {
+            this.notification.error(err);
         }
     }
 
@@ -49,8 +54,9 @@ export class SocketService {
 
     joinSuccess(): Observable<string> {
         return new Observable((subscriber) => {
-            this.socket.on('successfullJoin', (joinMsg: string) => {
-                subscriber.next(joinMsg);
+            this.socket.on('successfullJoin', (room: string) => {
+                subscriber.next(room);
+                this.notification.notify(`Successfully joined : ${room}`);
             });
         });
     }
@@ -79,18 +85,31 @@ export class SocketService {
         });
     }
 
-    private validCommanderDeck(cards: string[]): boolean {
+    /**
+     * @throws {Error} If the commander deck is not valid
+     */
+    private checkValidCommanderDeck(cards: string[]): void {
         let nbCards = 0;
         let nbCommanders = 0;
         cards.forEach((card) => {
-            if (card.search(new RegExp('^[0-9]{1,2}x .+$')) !== -1) {
-                const qtNameSplit = card.split('x ');
+            if (card.search(new RegExp('^[0-9]{1,2} .+$')) !== -1) {
+                const qtNameSplit = card.split(' ');
                 nbCards += Number(qtNameSplit[0]);
-                if (qtNameSplit[1].includes('*CMDR*')) {
+                if (qtNameSplit.slice(1, qtNameSplit.length).join(' ').includes('*CMDR*')) {
                     nbCommanders++;
                 }
             }
         });
-        return nbCards === 100 && nbCommanders > 0 && nbCommanders <= 2;
+        if (nbCards !== 100) {
+            throw new Error(`Invalid number of cards. You had : ${nbCards} / 100`);
+        }
+        if (nbCommanders <= 0 || nbCommanders > 2) {
+            if (nbCommanders === 0) {
+                throw new Error('You might be missing a *CMDR* in your list.');
+            } else {
+                throw new Error(`Invalid number of Commanders. You had : ${nbCommanders}`
+                    + 'there can only be one! Or two if you have partners.');
+            }
+        }
     }
 }

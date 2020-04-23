@@ -29,15 +29,6 @@ export class RoomHandler {
         setInterval(() => this.sendRoomInfo(), 1000);
     }
 
-    sendRoomInfo(): void {
-        this.roomInfo.forEach((info) => {
-            const nbConnected = this.nbConnectedToRoom(info[0]);
-            if (info[1] !== nbConnected) {
-                info[1] = nbConnected;
-            }
-        });
-        this.io.emit('roomInfo', this.roomInfo);
-    }
 
     joinRoom(socket: SocketIO.Socket, roomName: string, username: string): void {
         if (this.rooms.includes(roomName) && this.nbConnectedToRoom(roomName) < this.maxPerRoom) {
@@ -56,6 +47,16 @@ export class RoomHandler {
                 this.cancelGameIfNotEnoughPlayers(room);
             }
         })
+    }
+
+    private sendRoomInfo(): void {
+        this.roomInfo.forEach((info) => {
+            const nbConnected = this.nbConnectedToRoom(info[0]);
+            if (info[1] !== nbConnected) {
+                info[1] = nbConnected;
+            }
+        });
+        this.io.emit('roomInfo', this.roomInfo);
     }
 
     private startGameIfRoomFull(roomName: string) {

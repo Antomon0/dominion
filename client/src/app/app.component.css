@@ -1,5 +1,5 @@
 #notificationPanel {
-  position: absolute;
+  position: fixed;
 
   top: 85%;
   right: 0%;
@@ -10,17 +10,24 @@
   border: solid;
   border-width: 1px;
 
+}
+
+.red {
   background-color: lightcoral;
+}
+
+.green {
+  background-color: lightgreen;
 }
 
 .display {
   visibility: visible;
   opacity: 1;
-  transition: opacity 2s linear;
+  transition: opacity 1s linear;
 }
 
 .hide {
   visibility: hidden;
   opacity: 0;
-  transition: visibility 0s 2s, opacity 2s linear;
+  transition: visibility 0s 1s, opacity 1s linear;
 }

@@ -1,7 +1,6 @@
 import socketio from 'socket.io';
 import { Player } from './Player';
-import { inject } from 'inversify';
-import { ScryfallApiService } from '../services/ScryfallApiService';
+import { container } from '../config/inversify.config';
 import types from '../config/types';
 
 export class Game {
@@ -12,26 +11,22 @@ export class Game {
 
     private players: Map<string, Player>;
 
-    constructor(
-        @inject(types.Scryfall) private api: ScryfallApiService,
-        io: socketio.Server,
-        room: string,
-        sids: string[]
-    ) {
+    constructor(io: socketio.Server, room: string, sids: string[]) {
         this.io = io;
         this.roomName = room;
         this.players = new Map<string, Player>();
         sids.forEach((sid) => {
-            const player = new Player(this.api);
+            const player = container.get<Player>(types.Player);
             this.players.set(sid, player);
             this.io.to(sid).emit('startGame');
 
-            player.finishedAssemblingDeck.subscribe((urls: string[]) => {
+            player.deck.finishedAssemblingDeck.subscribe((urls: string[]) => {
                 this.io.sockets.sockets[sid].emit('finishedDeck', urls);
             });
 
             this.io.sockets.sockets[sid].on('deck', (deck: string[]) => {
-                player.assembleDeck(deck);
+                player.deck.resetDeck();
+                player.deck.assembleDeck(deck);
             });
         });
     }
