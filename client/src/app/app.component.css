@@ -1,0 +1,26 @@
+#notificationPanel {
+  position: absolute;
+
+  top: 85%;
+  right: 0%;
+
+  height: 75px;
+  width: 150px;
+
+  border: solid;
+  border-width: 1px;
+
+  background-color: lightcoral;
+}
+
+.display {
+  visibility: visible;
+  opacity: 1;
+  transition: opacity 2s linear;
+}
+
+.hide {
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s 2s, opacity 2s linear;
+}

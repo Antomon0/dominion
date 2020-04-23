@@ -56,6 +56,10 @@ export class RoomComponent implements OnDestroy {
     this.router.navigateByUrl('/');
   }
 
+  changeDeck(): void {
+    this.openedDialog = this.dialogOpener.open(DeckInputComponent, { height: '90%' });
+  }
+
   ngOnDestroy(): void {
     this.leaveRoom();
     this.subscriptions.forEach((sub) => {

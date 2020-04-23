@@ -1,15 +1,23 @@
 import * as io from 'socket.io-client';
 import { Observable, Subscriber } from 'rxjs';
+import { NotificationService } from './notification-service.service';
+import { Injectable } from '@angular/core';
 
+@Injectable()
 export class SocketService {
 
     private url = 'http://localhost:3000';
     private socket: SocketIOClient.Socket;
 
-    constructor() {
+    constructor(
+        private notification: NotificationService,
+    ) {
         this.socket = io(this.url);
+        this.socket.on('connect_error', () => {
+            this.notification.notify('Couldn\'t connect to the server.');
+        });
         this.socket.on('failedJoin', () => {
-            window.alert('Failed joining room, it might be full');
+            this.notification.notify('Failed joining room, it might be full.');
         });
     }
 
@@ -75,10 +83,12 @@ export class SocketService {
         let nbCards = 0;
         let nbCommanders = 0;
         cards.forEach((card) => {
-            const qtNameSplit = card.split('x ');
-            nbCards += Number(qtNameSplit[0]);
-            if (qtNameSplit[1].includes('*CMDR*')) {
-                nbCommanders++;
+            if (card.search(new RegExp('^[0-9]{1,2}x .+$')) !== -1) {
+                const qtNameSplit = card.split('x ');
+                nbCards += Number(qtNameSplit[0]);
+                if (qtNameSplit[1].includes('*CMDR*')) {
+                    nbCommanders++;
+                }
             }
         });
         return nbCards === 100 && nbCommanders > 0 && nbCommanders <= 2;

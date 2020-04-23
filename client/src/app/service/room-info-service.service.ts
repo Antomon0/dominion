@@ -17,7 +17,11 @@ export class RoomInfoService {
     }
 
     getRoomStatus(roomName: string) {
-        const room = this.roomInfo.find((info) => info[0] === roomName);
-        return `${room[0]} : ${room[1]} / ${this.MAX_PLAYER_PER_ROOM}`;
+        if (this.roomInfo) {
+            const room = this.roomInfo.find((info) => info[0] === roomName);
+            return `${room[0]} : ${room[1]} / ${this.MAX_PLAYER_PER_ROOM}`;
+        } else {
+            return 'No rooms available';
+        }
     }
 }

@@ -9,6 +9,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DeckInputComponent } from './components/deck-input/deck-input.component';
 import { RoomComponent } from './components/room/room.component';
 import { RoomInfoService } from './service/room-info-service.service';
+import { NotificationService } from './service/notification-service.service';
 
 @NgModule({
   declarations: [
@@ -26,6 +27,7 @@ import { RoomInfoService } from './service/room-info-service.service';
   providers: [
     SocketService,
     RoomInfoService,
+    NotificationService,
   ],
   entryComponents: [
     DeckInputComponent,

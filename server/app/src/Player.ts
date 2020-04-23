@@ -45,14 +45,16 @@ export class Player {
         let commanderName: string = '';
 
         deck.forEach((info: string) => {
-            const split = info.split('x ');
-            const quantity = Number(split[0]);
-            let name = split[1];
-            if (name.includes('*CMDR*')) {
-                name = name.substring(0, name.indexOf('*CMDR*') - 1);
-                commanderName = name;
+            if (info.search(new RegExp('^[0-9]{1,2}x .+$')) !== -1) {
+                const split = info.split('x ');
+                const quantity = Number(split[0]);
+                let name = split[1];
+                if (name.includes('*CMDR*')) {
+                    name = name.substring(0, name.indexOf('*CMDR*') - 1);
+                    commanderName = name;
+                }
+                infoMap.set(name, quantity);
             }
-            infoMap.set(name, quantity);
         });
 
         const addCardsToDeck = (cards: CardCollection) => {
@@ -77,16 +79,17 @@ export class Player {
                     }
                     return 0;
                 });
-                const uris = this.deck.map((card) => {
+                const uri = this.commander.image_uris.normal;
+                const uris = [];
+                uris.push((uri) ? uri : '');
+                uris.concat(this.deck.map((card) => {
                     const uri = card.image_uris.normal;
                     if (uri) {
                         return uri;
                     } else {
                         return '';
                     }
-                });
-                const uri = this.commander.image_uris.normal;
-                uris.push((uri) ? uri : '');
+                }));
                 this.finishedAssembling.next(uris);
             }
         }
