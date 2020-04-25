@@ -7,6 +7,7 @@ import { RoomComponent } from './components/room/room.component';
 const routes: Routes = [
   { path: '', component: ViewComponent },
   { path: 'room/:id', component: RoomComponent },
+  { path: '**', redirectTo: '' },
 ];
 
 @NgModule({

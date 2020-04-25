@@ -1,40 +1,44 @@
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
-import types from '../config/types';
-import { GameHandler } from './GameHandler';
 import socketio from 'socket.io';
+import { Game } from '../src/Game';
+import types from '../config/types';
+import { PlayerHandler } from './PlayerHandler';
 
 @injectable()
 export class RoomHandler {
 
+    private readonly NB_ROOMS = 4;
+    private readonly maxPerRoom: number = 2;
     readonly defaultNamespace: string = '/'
+
     readonly roomInfo: [string, number][];
-    readonly rooms: string[] = [
-        'room1',
-        'room2',
-        'room3',
-        'room4'
-    ]
-    readonly maxPerRoom: number = 2;
+    readonly rooms: Map<string, Game>;
 
     io: socketio.Server;
 
     constructor(
-        @inject(types.GameHandler) private game: GameHandler,
+        @inject(types.GameFactory) private factory: (io: socketio.Server) => Game,
+        @inject(types.PlayerHandler) private players: PlayerHandler,
     ) {
         this.roomInfo = [];
-        this.rooms.forEach((room) => {
-            this.roomInfo.push([room, 0]);
-        });
+        this.rooms = new Map<string, Game>();
+        for (let i = 1; i <= this.NB_ROOMS; i++) {
+            const roomName = `room${i}`;
+            this.roomInfo.push([roomName, 0]);
+            this.rooms.set(roomName, this.factory(this.io));
+        }
         setInterval(() => this.sendRoomInfo(), 1000);
     }
 
 
     joinRoom(socket: SocketIO.Socket, roomName: string, username: string): void {
-        if (this.rooms.includes(roomName) && this.nbConnectedToRoom(roomName) < this.maxPerRoom) {
+        const game = this.rooms.get(roomName);
+        const player = this.players.getPlayer(socket.id);
+        if (game && player && this.nbConnectedToRoom(roomName) < this.maxPerRoom) {
             socket.join(roomName);
+            game.addPlayer(player);
             this.io.in(roomName).emit('successfullJoin', roomName);
-            this.startGameIfRoomFull(roomName);
         } else {
             socket.emit('failedJoin');
         }
@@ -43,8 +47,12 @@ export class RoomHandler {
     leaveRoom(socket: SocketIO.Socket) {
         Object.keys(socket.rooms).forEach((room) => {
             if (room !== socket.id) {
+                const game = this.rooms.get(room)
+                const player = this.players.getPlayer(socket.id);
                 socket.leave(room);
-                this.cancelGameIfNotEnoughPlayers(room);
+                if (game && player) {
+                    game.removePlayer(player);
+                }
             }
         })
     }
@@ -57,20 +65,6 @@ export class RoomHandler {
             }
         });
         this.io.emit('roomInfo', this.roomInfo);
-    }
-
-    private startGameIfRoomFull(roomName: string) {
-        const connectedClients = this.getConnectedClients(roomName);
-        if (connectedClients && connectedClients.length === this.maxPerRoom) {
-            this.game.startGame(roomName, connectedClients);
-        }
-    }
-
-    private cancelGameIfNotEnoughPlayers(roomName: string) {
-        const connectedClients = this.getConnectedClients(roomName);
-        if (connectedClients && connectedClients.length !== this.maxPerRoom) {
-            this.game.cancelGame(roomName, connectedClients);
-        }
     }
 
     private nbConnectedToRoom(roomName: string): number {

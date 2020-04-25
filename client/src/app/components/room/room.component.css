@@ -1,8 +1,43 @@
-div {
+.centered {
   text-align: center;
 }
 
+.typeSection {
+  display: block;
+  width: 100%;
+}
+
+.card,
+.double-sided-card {
+  display: inline-block;
+}
+
+.double-sided-card {
+  width: 244px;
+}
+
+.double-sided-card .frontFace:hover {
+  opacity: 0;
+}
+
 img {
+  border-radius: 4%;
   height: 340px;
   width: 244px;
+}
+
+img.backFace {
+  float: left;
+  margin-right: -100%;
+}
+
+div.basicLandSection {
+  display: flex;
+  flex-direction: row-reverse;
+  flex-wrap: wrap;
+}
+
+img.duplicate {
+  float: left;
+  margin-right: -195px;
 }

@@ -4,12 +4,14 @@ export default {
     Application: Symbol('Application'),
 
     RoomHandler: Symbol('RoomHandler'),
-    GameHandler: Symbol('GameHandler'),
+    PlayerHandler: Symbol('PlayerHandler'),
 
     Scryfall: Symbol('ScryfallApiService'),
 
+    GameFactory: Symbol('Factory<Game>'),
     Game: Symbol('Game'),
-    Player: Symbol('Player'),
     PlayerFactory: Symbol('Factory<Player>'),
+    Player: Symbol('Player'),
+
     Deck: Symbol('Deck'),
 }

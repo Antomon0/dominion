@@ -1,11 +1,33 @@
-<div>
+<div class='centered'>
   <h1>{{title}}</h1>
   <p>{{roomInfo.getRoomStatus(title)}}</p>
-  <!-- <button *ngIf='this.roomInfo' (click)='startGame()'>Start Game</button> -->
-  <button (click)='changeDeck()'>Change Deck</button>
+  <button *ngIf='roomInfo.getNumberOfPlayers(title) === roomInfo.MAX_PLAYER_PER_ROOM' (click)='startGame()'>Start
+    Game</button>
+  <button [disabled]='cannotChangeDeck' (click)='changeDeck()'>Change Deck</button>
   <button (click)='leaveRoom()'>Leave Room</button>
 </div>
 
-<div class='imgContainer'>
-  <img *ngFor="let uri of uris" [src]='uri'>
+<div class='imgContainer centered'>
+  <ng-container *ngFor="let commander of commanders">
+    <div class='card' *ngIf="commander.images.length === 1">
+      <img [src]='commander.images[0]'>
+    </div>
+    <div class='double-sided-card' *ngIf="commander.images.length === 2">
+      <img class='frontFace' [src]='commander.images[0]'>
+      <img class='backFace' [src]='commander.images[1]'>
+    </div>
+  </ng-container>
+
+  <div class='typeSection' *ngFor="let info of infoToDisplay">
+    <h2 *ngIf='info[1].length !== 0'>{{info[0]}}</h2>
+    <ng-container *ngFor="let cardInfo of info[1]">
+      <div class='card' *ngIf="cardInfo.images.length === 1">
+        <img [src]='cardInfo.images[0]'>
+      </div>
+      <div class='double-sided-card' *ngIf="cardInfo.images.length === 2">
+        <img class='frontFace' [src]='cardInfo.images[0]'>
+        <img class='backFace' [src]='cardInfo.images[1]'>
+      </div>
+    </ng-container>
+  </div>
 </div>

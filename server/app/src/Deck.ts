@@ -4,6 +4,7 @@ import { CardCollection } from "../../interfaces/CardCollection";
 import { Observable, Subject } from 'rxjs';
 import { injectable, inject } from "inversify";
 import { Card } from "../../interfaces/Card";
+import { DeckInfo, CardInfo } from "../../../common/DeckInfo";
 
 @injectable()
 export class Deck {
@@ -13,8 +14,8 @@ export class Deck {
 
     private commanders: Card[];
 
-    private finishedAssembling: Subject<any>;
-    finishedAssemblingDeck: Observable<any>;
+    private finishedAssembling: Subject<DeckInfo>;
+    finishedAssemblingDeck: Observable<DeckInfo>;
 
 
     constructor(
@@ -41,7 +42,6 @@ export class Deck {
         this.deck = [];
     }
 
-    // TODO add some cache thing or the cards to not spam scryfall.
     assembleDeck(deck: string[]): void {
         const infoMap: Map<string, number> = this.convertDeckToMap(deck);
         const names = Array.from(infoMap.keys());
@@ -104,30 +104,47 @@ export class Deck {
         });
         this.checkIfDeckIsComplete();
     }
+
     private checkIfDeckIsComplete(): void {
         if (this.commanders.length > 0 && this.deck.length === 100 - this.commanders.length) {
-            this.sortDeckByType();
-            const uris: string[] = [];
-            this.commanders.forEach((commander) => {
-                this.getCardUri(commander, uris);
-            })
-            this.deck.forEach((card) => {
-                this.getCardUri(card, uris);
-            });
-            this.finishedAssembling.next(uris);
+            const info = this.formatCardInfoForClient();
+            this.finishedAssembling.next(info);
         }
     }
 
-    private getCardUri(card: Card, uris: string[]): void {
+    private formatCardInfoForClient(): DeckInfo {
+        this.sortDeckByType();
+        let deckInfo: DeckInfo = { cards: [] }
+        this.commanders.forEach((commander) => {
+            deckInfo.cards.push(
+                this.getCardInfo(commander, true)
+            );
+        })
+        this.deck.forEach((card) => {
+            deckInfo.cards.push(
+                this.getCardInfo(card, false)
+            );
+        });
+        return deckInfo;
+    }
+
+    private getCardInfo(card: Card, isCommander: boolean): CardInfo {
+        const cardInfo: CardInfo = {
+            isCommander,
+            name: card.name,
+            types: card.type_line,
+            images: []
+        }
         if (card.image_uris) {
-            uris.push((card.image_uris.normal) ? card.image_uris.normal : '');
+            cardInfo.images.push(card.image_uris.normal);
         } else if (card.card_faces) {
             card.card_faces.forEach((face) => {
                 if (face.image_uris) {
-                    uris.push((face.image_uris.normal) ? face.image_uris.normal : '');
+                    cardInfo.images.push(face.image_uris.normal);
                 }
             });
         }
+        return cardInfo;
     }
 
 }

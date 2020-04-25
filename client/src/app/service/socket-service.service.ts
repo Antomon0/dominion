@@ -2,6 +2,7 @@ import * as io from 'socket.io-client';
 import { Observable } from 'rxjs';
 import { NotificationService } from './notification-service.service';
 import { Injectable } from '@angular/core';
+import { DeckInfo } from '../../../../common/DeckInfo';
 
 @Injectable()
 export class SocketService {
@@ -16,7 +17,6 @@ export class SocketService {
         this.socket.on('connect', () => {
             this.notification.notify('Successfully connected to server.');
         });
-
         this.socket.on('connect_error', () => {
             this.notification.error('Couldn\'t connect to the server.');
         });
@@ -77,9 +77,9 @@ export class SocketService {
         });
     }
 
-    deckInfo(): Observable<string[]> {
+    deckInfo(): Observable<DeckInfo> {
         return new Observable((subscriber) => {
-            this.socket.on('finishedDeck', (uris: string[]) => {
+            this.socket.on('finishedDeck', (uris: DeckInfo) => {
                 subscriber.next(uris);
             });
         });

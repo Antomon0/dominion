@@ -1,36 +1,38 @@
-import socketio from 'socket.io';
+import * as socketio from 'socket.io';
 import { Player } from './Player';
-import { container } from '../config/inversify.config';
-import types from '../config/types';
+import { injectable } from 'inversify';
 
+@injectable()
 export class Game {
 
     private io: socketio.Server;
 
-    roomName: string;
+    private players: Player[];
 
-    private players: Map<string, Player>;
-
-    constructor(io: socketio.Server, room: string, sids: string[]) {
+    constructor(io: socketio.Server) {
         this.io = io;
-        this.roomName = room;
-        this.players = new Map<string, Player>();
-        sids.forEach((sid) => {
-            const player = container.get<Player>(types.Player);
-            this.players.set(sid, player);
-            this.io.to(sid).emit('startGame');
-
-            player.deck.finishedAssemblingDeck.subscribe((urls: string[]) => {
-                this.io.sockets.sockets[sid].emit('finishedDeck', urls);
-            });
-
-            this.io.sockets.sockets[sid].on('deck', (deck: string[]) => {
-                player.deck.resetDeck();
-                player.deck.assembleDeck(deck);
-            });
-        });
+        this.players = [];
     }
 
+    addPlayer(player: Player): void {
+        this.players.push(player);
+    }
 
+    removePlayer(player: Player): void {
+        const index = this.players.indexOf(player);
+        if (index !== -1) {
+            this.players.splice(index, 1);
+        }
+    }
+
+    cancelGame(): void {
+
+    }
+
+    startGame(): void {
+        this.players.forEach((player) => {
+            this.io.to(player.sid).emit('startGame');
+        });
+    }
 
 }

@@ -1,8 +1,8 @@
 export interface Images {
-    "small": string | null;
-    "normal": string | null;
-    "large": string | null;
-    "png": string | null;
-    "art_crop": string | null;
-    "broder_crop": string | null;
+    "small": string;
+    "normal": string;
+    "large": string;
+    "png": string;
+    "art_crop": string;
+    "broder_crop": string;
 }
