@@ -8,9 +8,11 @@ import { DeckInfo } from "../../../common/DeckInfo";
 @injectable()
 export class Player {
 
-    sid: string;
     private life: number;
     private hand: Card[]
+    private isReady: boolean;
+
+    sid: string;
     io: socketio.Socket
 
     constructor(
@@ -20,14 +22,17 @@ export class Player {
     ) {
         this.sid = sid;
         this.io = socket;
+        this.isReady = false;
         this.hand = [];
         this.life = 40;
 
-        this.deck.finishedAssemblingDeck.subscribe((uris: DeckInfo) => {
-            this.io.emit('finishedDeck', uris);
+        this.deck.finishedAssemblingDeck.subscribe((completedDeckInfo: DeckInfo) => {
+            this.io.emit('finishedDeck', completedDeckInfo);
+            this.isReady = true;
         })
 
         this.io.on('deck', (deck: string[]) => {
+            this.isReady = false;
             this.deck.resetDeck();
             this.deck.assembleDeck(deck);
         });
@@ -39,5 +44,9 @@ export class Player {
 
     getHand(): Card[] {
         return this.hand;
+    }
+
+    ready(): boolean {
+        return this.isReady;
     }
 }

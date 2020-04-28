@@ -6,6 +6,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { RoomInfoService } from 'src/app/service/room-info-service.service';
 import { Subscription } from 'rxjs';
 import { DeckInfo, CardInfo } from '../../../../../common/DeckInfo';
+import { DeckInfoService } from 'src/app/service/deck-info-service.service';
 
 @Component({
   selector: 'app-room',
@@ -16,7 +17,6 @@ export class RoomComponent implements OnDestroy {
 
   CardTypesRef: typeof CardTypes = CardTypes;
 
-  cannotChangeDeck: boolean;
   title: string;
 
   infoToDisplay: [string, CardInfo[]][];
@@ -29,6 +29,7 @@ export class RoomComponent implements OnDestroy {
     private route: ActivatedRoute,
     private io: SocketService,
     private router: Router,
+    private deckInfo: DeckInfoService,
     private dialogOpener: MatDialog,
     public roomInfo: RoomInfoService,
   ) {
@@ -41,7 +42,6 @@ export class RoomComponent implements OnDestroy {
       }
     }
 
-    this.cannotChangeDeck = false;
     this.subscriptions = [];
 
     this.subscriptions.push(
@@ -51,30 +51,12 @@ export class RoomComponent implements OnDestroy {
           this.cancelGame();
         });
       }));
-
+    if (this.deckInfo.deckInfo) {
+      this.formatDeckInfoForComponent();
+    }
     this.subscriptions.push(
-      this.io.deckInfo().subscribe((deckInfo: DeckInfo) => {
-        const basicLands: CardInfo[] = [];
-        deckInfo.cards.forEach((card) => {
-          if (card.isCommander) {
-            this.commanders.push(card);
-          } else {
-            for (const type in CardTypes) {
-              if (isNaN(Number(type))) {
-                const typeLine = card.types.toLowerCase().split(' // ')[0];
-                if (typeLine.includes('basic') && typeLine.includes('land')) {
-                  basicLands.push(card);
-                  break;
-                }
-                if (typeLine.includes(type.toLowerCase())) {
-                  this.infoToDisplay[CardTypes[type]][1].push(card);
-                  break;
-                }
-              }
-            }
-          }
-        });
-        this.infoToDisplay[CardTypes.Land][1] = this.infoToDisplay[CardTypes.Land][1].concat(basicLands);
+      this.deckInfo.deckUpdated.subscribe(() => {
+        this.formatDeckInfoForComponent();
       }));
   }
 
@@ -101,6 +83,32 @@ export class RoomComponent implements OnDestroy {
       sub.unsubscribe();
     });
   }
+
+  private formatDeckInfoForComponent(): void {
+    const basicLands: CardInfo[] = [];
+    this.commanders = [];
+    this.deckInfo.deckInfo.cards.forEach((card) => {
+      if (card.isCommander) {
+        this.commanders.push(card);
+      } else {
+        for (const type in CardTypes) {
+          if (isNaN(Number(type))) {
+            const typeLine = card.types.toLowerCase().split(' // ')[0];
+            if (typeLine.includes('basic') && typeLine.includes('land')) {
+              basicLands.push(card);
+              break;
+            }
+            if (typeLine.includes(type.toLowerCase())) {
+              this.infoToDisplay[CardTypes[type]][1].push(card);
+              break;
+            }
+          }
+        }
+      }
+    });
+    this.infoToDisplay[CardTypes.Land][1] = this.infoToDisplay[CardTypes.Land][1].concat(basicLands);
+  }
+
 }
 
 enum CardTypes {

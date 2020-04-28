@@ -35,7 +35,7 @@ export class RoomHandler {
     joinRoom(socket: SocketIO.Socket, roomName: string, username: string): void {
         const game = this.rooms.get(roomName);
         const player = this.players.getPlayer(socket.id);
-        if (game && player && this.nbConnectedToRoom(roomName) < this.maxPerRoom) {
+        if (game && player && this.nbConnectedToRoom(roomName) < this.maxPerRoom && Object.keys(socket.rooms).length == 1) {
             socket.join(roomName);
             game.addPlayer(player);
             this.io.in(roomName).emit('successfullJoin', roomName);

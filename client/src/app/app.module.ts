@@ -10,6 +10,7 @@ import { DeckInputComponent } from './components/deck-input/deck-input.component
 import { RoomComponent } from './components/room/room.component';
 import { RoomInfoService } from './service/room-info-service.service';
 import { NotificationService } from './service/notification-service.service';
+import { DeckInfoService } from './service/deck-info-service.service';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { NotificationService } from './service/notification-service.service';
     SocketService,
     RoomInfoService,
     NotificationService,
+    DeckInfoService,
   ],
   entryComponents: [
     DeckInputComponent,

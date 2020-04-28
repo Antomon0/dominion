@@ -102,10 +102,10 @@ export class Deck {
                 this.deck.push(card);
             }
         });
-        this.checkIfDeckIsComplete();
+        this.sendDeckInfo();
     }
 
-    private checkIfDeckIsComplete(): void {
+    sendDeckInfo(): void {
         if (this.commanders.length > 0 && this.deck.length === 100 - this.commanders.length) {
             const info = this.formatCardInfoForClient();
             this.finishedAssembling.next(info);

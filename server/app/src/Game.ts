@@ -12,10 +12,12 @@ export class Game {
     constructor(io: socketio.Server) {
         this.io = io;
         this.players = [];
+        setInterval(() => this.canStartGame(), 1000 / 60);
     }
 
     addPlayer(player: Player): void {
         this.players.push(player);
+        player.deck.sendDeckInfo();
     }
 
     removePlayer(player: Player): void {
@@ -29,10 +31,13 @@ export class Game {
 
     }
 
-    startGame(): void {
-        this.players.forEach((player) => {
-            this.io.to(player.sid).emit('startGame');
-        });
+    canStartGame(): void {
+        if (this.io) {
+            const canStart = this.players.findIndex((player) => !player.ready()) === -1;
+            this.players.forEach((player) => {
+                this.io.to(player.sid).emit('canStartGame', canStart);
+            });
+        }
     }
 
 }

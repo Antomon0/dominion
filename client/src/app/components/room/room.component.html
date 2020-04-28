@@ -3,7 +3,8 @@
   <p>{{roomInfo.getRoomStatus(title)}}</p>
   <button *ngIf='roomInfo.getNumberOfPlayers(title) === roomInfo.MAX_PLAYER_PER_ROOM' (click)='startGame()'>Start
     Game</button>
-  <button [disabled]='cannotChangeDeck' (click)='changeDeck()'>Change Deck</button>
+  <button (click)='startGame()'>Start Game</button>
+  <button (click)='changeDeck()'>Change Deck</button>
   <button (click)='leaveRoom()'>Leave Room</button>
 </div>
 
